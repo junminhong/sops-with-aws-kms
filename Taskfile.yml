@@ -1,0 +1,62 @@
+version: "3"
+
+vars:
+  DEFAULT_PROJECT: example
+  DEFAULT_ENV: dev
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  setup:
+    desc: Setup development environment (sops, aws cli)
+    cmds:
+      - |
+        echo "Setting up SOPS development environment..."
+        if ! command -v sops >/dev/null 2>&1; then
+          echo "❌ sops not found. Please install sops first:"
+          echo "   brew install sops"
+          exit 1
+        fi
+        echo "✅ sops is installed"
+        if ! command -v aws >/dev/null 2>&1; then
+          echo "❌ aws cli not found. Please install AWS CLI first"
+          exit 1
+        fi
+        echo "✅ aws cli is installed"
+        echo "✅ Setup complete"
+
+  encrypt:
+    desc: Encrypt all files under {{.project}}/{{.env}} with sops (in-place)
+    vars:
+      PROJECT: "{{.project | default .DEFAULT_PROJECT}}"
+      ENV: "{{.env | default .DEFAULT_ENV}}"
+      PROFILE_ARG: "{{if .profile}}-p {{.profile}}{{end}}"
+    env:
+      AWS_PROFILE: '{{.profile | default ""}}'
+    cmds:
+      - ./utils/encrypt_files.py {{.PROFILE_ARG}} {{.PROJECT}} {{.ENV}} -v
+
+  encrypt-dry:
+    desc: Dry run - show what files would be encrypted
+    vars:
+      PROJECT: "{{.project | default .DEFAULT_PROJECT}}"
+      ENV: "{{.env | default .DEFAULT_ENV}}"
+      PROFILE_ARG: "{{if .profile}}-p {{.profile}}{{end}}"
+    env:
+      AWS_PROFILE: '{{.profile | default ""}}'
+    cmds:
+      - ./utils/encrypt_files.py {{.PROFILE_ARG}} -n {{.PROJECT}} {{.ENV}} -v
+
+  decrypt:
+    desc: Decrypt all files in {{.project}}/{{.env}} with sops (in-place)
+    vars:
+      PROJECT: "{{.project | default .DEFAULT_PROJECT}}"
+      ENV: "{{.env | default .DEFAULT_ENV}}"
+      PROFILE_ARG: "{{if .profile}}-p {{.profile}}{{end}}"
+    env:
+      AWS_PROFILE: '{{.profile | default ""}}'
+    cmds:
+      - ./utils/decrypt_files.py {{.PROFILE_ARG}} {{.PROJECT}} {{.ENV}} -v

@@ -1,0 +1,47 @@
+---
+name: Sync changed env file to s3
+
+on:
+  push:
+    branches:
+      - feature/test-github-action-pipeline
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      prod: ${{ steps.changes.outputs.prod }}
+      non-prod: ${{ steps.changes.outputs.non-prod }}
+      prod_files: ${{ steps.changes.outputs.prod_files }}
+      non_prod_files: ${{ steps.changes.outputs.non_prod_files }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Detect environment changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          list-files: "json"
+          filters: |
+            prod:
+              - '*/prod/**'
+            non-prod:
+              - '*/pre-dev/**'
+              - '*/dev/**'
+              - '*/alpha/**'
+              - '*/beta/**'
+              - '*/qa/**'
+              - '*/stage/**'
+
+      - name: Changes summary
+        run: |
+          set -euo pipefail
+          echo "prod=${{ steps.changes.outputs.prod }}"
+          echo "non_prod=${{ steps.changes.outputs.non-prod }}"
+          if [ "${{ steps.changes.outputs.prod }}" = "true" ]; then
+            echo "prod_files=${{ steps.changes.outputs.prod_files }}"
+          fi
+          if [ "${{ steps.changes.outputs.non-prod }}" = "true" ]; then
+            echo "non_prod_files=${{ steps.changes.outputs.non_prod_files }}"
+          fi

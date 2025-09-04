@@ -2,8 +2,6 @@
 
 簡化使用 [SOPS](https://getsops.io) 搭配 **AWS KMS** 的加解密流程，並提供 **dry run 檢查、AWS Profile 切換、統計輸出**與 **Task 封裝**。
 
----
-
 ## ✨ 特性
 
 * **加密 / 解密**：就地覆寫 (in-place)
@@ -11,8 +9,6 @@
 * **支援檔案格式**：`.yaml`, `.yml`, `.json`, `.env`
 * **統計資訊輸出**：總檔案數、加密數、跳過數、錯誤數
 * **AWS Profile 切換**：可透過 `-p/--profile` 或環境變數 `AWS_PROFILE` 控制
-
----
 
 ## 📦 需求與安裝
 
@@ -28,8 +24,6 @@
 task setup
 ```
 
----
-
 ## 🚀 快速開始
 
 以下以範例專案 `example/dev` 為例：
@@ -44,8 +38,6 @@ task encrypt project=example env=dev profile=default
 # 解密
 task decrypt project=example env=dev profile=default
 ```
-
----
 
 ## 🔧 使用方式
 
@@ -75,8 +67,6 @@ task decrypt project=<project> env=<env> profile=<aws-profile>
 * `project`、`env`：目標資料夾 → `{project}/{env}/`
 * `profile`：指定 AWS Profile（未指定則使用預設憑證）
 
----
-
 ### 2. 直接呼叫腳本
 
 若不想用 `task`，也可直接執行 Python 腳本：
@@ -95,8 +85,6 @@ task decrypt project=<project> env=<env> profile=<aws-profile>
 # 解密（詳細輸出）
 ./utils/decrypt_files.py <project> <env> -v
 ```
-
----
 
 ## ⚙️ 設定與範例
 
@@ -122,8 +110,6 @@ creation_rules:
 * JSON：`"sops": {}`
 * ENV：`sops_version=...`
 
----
-
 ## 📂 專案結構
 
 ```
@@ -140,16 +126,12 @@ creation_rules:
 └── LICENSE
 ```
 
----
-
 ## 🔒 安全與最佳實務
 
 * **先 Dry Run**：避免誤加密不應處理的檔案
 * **嚴格控管 KMS 權限**：IAM 與 KMS Key Policy 需允許 Encrypt/Decrypt
 * **Git 忽略明文**：將解密後的檔案加入 `.gitignore`
 * **檢查 `.sops.yaml` 覆蓋範圍**：確認 `path_regex` 與副檔名設定正確
-
----
 
 ## 🐞 疑難排解
 
@@ -158,16 +140,12 @@ creation_rules:
 * **KMS 權限不足**：確認 AWS Profile、IAM Policy 與 KMS Key Policy
 * **找不到檔案**：確認 `{project}/{env}/` 下有支援的副檔名
 
----
-
 ## 🤝 貢獻指南
 
 歡迎任何形式的貢獻 🎉
 
 * **回報問題 (Issues)**：請至 [Issues](https://github.com/junminhong/sops-with-aws-kms/issues) 提交
 * **提交程式碼 (Pull Requests)**：先 Fork → 開分支 → 修改 → PR
-
----
 
 ## 📜 授權
 

@@ -1,0 +1,7 @@
+creation_rules:
+  # 符合這規則要使用的 KMS key，換句話說可以根據不同規則使用不同 KMS key 增加安全性
+  - kms: "arn:aws:kms:{region}:{accountID}:key/{kmsID}"
+    # 檔案內容全部加密
+    encrypted_regex: "^.*$"
+    # 要被加密的檔案路徑，換句話說要符合路徑才會被加密
+    path_regex: ^example/dev/.*\.(yaml|yml|json|env)$
